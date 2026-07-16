@@ -1,7 +1,9 @@
 import {
   renderEmailBadge,
   renderEmailField,
+  renderEmailFinePrint,
   renderEmailHeading,
+  renderEmailLabel,
   renderEmailLayout,
   renderEmailQuote,
   renderEmailSubtext,
@@ -41,9 +43,9 @@ export function buildEnquiryEmailHtml(data: EnquiryEmailData): string {
     renderEmailField("Phone", data.phone),
     renderEmailField("Budget", data.budget),
     `</table>`,
-    `<p style="margin:0 0 8px;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#4a6363;">Project details</p>`,
+    renderEmailLabel("Project details"),
     renderEmailQuote(data.description),
-    `<p style="margin:0;font-size:13px;line-height:1.5;color:#4a6363;">Reply directly to this email to respond to ${data.name}.</p>`,
+    renderEmailFinePrint(`Reply directly to this email to respond to ${data.name}.`),
   ].join("");
 
   return renderEmailLayout({

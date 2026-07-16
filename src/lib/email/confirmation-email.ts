@@ -3,8 +3,12 @@ import {
   getEmailSiteUrl,
   renderEmailBadge,
   renderEmailButton,
+  renderEmailFinePrint,
   renderEmailHeading,
+  renderEmailLabel,
   renderEmailLayout,
+  renderEmailList,
+  renderEmailParagraph,
   renderEmailQuote,
   renderEmailSubtext,
 } from "@/lib/email/template";
@@ -39,16 +43,18 @@ export function buildConfirmationEmailHtml(data: ConfirmationEmailData): string 
     renderEmailSubtext(
       `We've received your enquiry from ${data.businessName}. Our team will review the details and come back within one working day.`
     ),
-    `<p style="margin:0 0 8px;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#4a6363;">What you sent us</p>`,
+    renderEmailLabel("What you sent us"),
     renderEmailQuote(data.description),
-    `<p style="margin:0 0 8px;font-size:15px;line-height:1.6;color:#0f1f1f;"><strong>What happens next</strong></p>`,
-    `<ul style="margin:0 0 24px;padding-left:20px;font-size:15px;line-height:1.7;color:#4a6363;">
-      <li style="margin-bottom:8px;">We review your project scope and budget.</li>
-      <li style="margin-bottom:8px;">If we're a fit, we reply with a written scope and fixed quote.</li>
-      <li>No commitment until you're ready to proceed.</li>
-    </ul>`,
+    renderEmailParagraph("What happens next", { strong: true }),
+    renderEmailList([
+      "We review your project scope and budget.",
+      "If we're a fit, we reply with a written scope and fixed quote.",
+      "No commitment until you're ready to proceed.",
+    ]),
     renderEmailButton("Visit TwinLabs", getEmailSiteUrl()),
-    `<p style="margin:24px 0 0;font-size:13px;line-height:1.5;color:#4a6363;">Questions? Reply to this email or contact us at ${siteConfig.email}.</p>`,
+    renderEmailFinePrint(
+      `Questions? Reply to this email or contact us at ${siteConfig.email}.`
+    ),
   ].join("");
 
   return renderEmailLayout({
