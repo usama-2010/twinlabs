@@ -1,7 +1,37 @@
 import type { NextConfig } from "next";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const root = path.dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  turbopack: {
+    root,
+  },
+  images: {
+    localPatterns: [
+      {
+        pathname: "/brand/**",
+      },
+      {
+        pathname: "/images/**",
+      },
+      {
+        pathname: "/images/**",
+        search: "?v=3",
+      },
+      {
+        pathname: "/images/**",
+        search: "?v=4",
+      },
+    ],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+    ],
+  },
 };
 
 export default nextConfig;
