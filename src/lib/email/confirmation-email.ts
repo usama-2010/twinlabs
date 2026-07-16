@@ -1,8 +1,6 @@
 import { siteConfig } from "@/lib/content/site";
 import {
-  getEmailSiteUrl,
   renderEmailBadge,
-  renderEmailButton,
   renderEmailFinePrint,
   renderEmailHeading,
   renderEmailLabel,
@@ -51,10 +49,7 @@ export function buildConfirmationEmailHtml(data: ConfirmationEmailData): string 
       "If we're a fit, we reply with a written scope and fixed quote.",
       "No commitment until you're ready to proceed.",
     ]),
-    renderEmailButton("Visit TwinLabs", getEmailSiteUrl()),
-    renderEmailFinePrint(
-      `Questions? Reply to this email or contact us at ${siteConfig.email}.`
-    ),
+    renderEmailFinePrint("Questions? Just reply to this email."),
   ].join("");
 
   return renderEmailLayout({
