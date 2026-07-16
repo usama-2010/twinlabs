@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { services, servicesSection, serviceImageSrc } from "@/lib/content/services";
@@ -44,23 +45,34 @@ export function Services() {
                 <p className="mt-4 text-base leading-relaxed text-muted">
                   {service.description}
                 </p>
-                <a
-                  href="#contact"
-                  className="link-arrow mt-5 inline-flex items-center gap-1.5"
-                >
-                  Discuss this service
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </a>
+                <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2">
+                  {service.landingSlug ? (
+                    <Link
+                      href={`/services/${service.landingSlug}`}
+                      className="link-arrow inline-flex items-center gap-1.5"
+                    >
+                      Learn more
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  ) : null}
+                  <a
+                    href="#contact"
+                    className="link-arrow inline-flex items-center gap-1.5 normal-case tracking-normal text-muted"
+                  >
+                    Discuss this service
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </a>
+                </div>
               </div>
             </motion.div>
           ))}
         </StaggerReveal>
 
         <Reveal className="mt-12 text-center">
-          <a href="#contact" className="btn-outline group inline-flex items-center gap-1.5">
+          <Link href="/services" className="btn-outline group inline-flex items-center gap-1.5">
             View all services
             <ArrowRight className="h-3.5 w-3.5" />
-          </a>
+          </Link>
         </Reveal>
       </div>
     </section>

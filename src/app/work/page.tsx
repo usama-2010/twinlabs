@@ -1,18 +1,24 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { caseStudies } from "@/lib/content/case-studies";
 import { CaseStudyImage } from "@/components/ui/CaseStudyImage";
 import { Reveal } from "@/components/ui/Reveal";
+import { workIndexJsonLd } from "@/lib/seo/json-ld";
+import { createPageMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = {
-  title: "Work | TwinLabs",
-  description: "Case studies from real clients — booking systems, field apps, client portals, and e-commerce.",
-};
+export const metadata: Metadata = createPageMetadata({
+  title: "Case Studies & Client Work",
+  description:
+    "Real custom software projects for UK businesses — booking systems, field service apps, client portals, and e-commerce. See outcomes, timelines, and tech stacks.",
+  pathname: "/work",
+});
 
 export default function WorkPage() {
   return (
     <div className="surface-band pt-24 pb-16 sm:pt-28 sm:pb-20 md:pt-36">
+      <JsonLd data={workIndexJsonLd()} />
       <div className="container-main max-w-3xl">
         <Reveal>
           <p className="section-eyebrow">All work</p>

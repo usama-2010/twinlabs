@@ -10,6 +10,8 @@ export interface Service {
   image: string;
   imageAlt: string;
   industries?: string[];
+  /** SEO landing page slug under /services */
+  landingSlug?: string;
 }
 
 export interface Industry {
@@ -61,4 +63,20 @@ export interface ProcessStep {
 export interface Value {
   title: string;
   description: string;
+}
+
+export interface LandingPage {
+  slug: string;
+  seoTitle: string;
+  metaDescription: string;
+  keywords: string[];
+  eyebrow: string;
+  h1: string;
+  lede: string;
+  image?: string;
+  imageAlt?: string;
+  sections: { title: string; body: string }[];
+  bullets: string[];
+  relatedWorkSlugs: string[];
+  relatedLinks: { label: string; href: string }[];
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { JsonLd } from "@/components/seo/JsonLd";
 import {
   caseStudies,
   getCaseStudyBySlug,
@@ -8,6 +9,8 @@ import {
 import { getReviewById } from "@/lib/content/reviews";
 import { CaseStudyImage } from "@/components/ui/CaseStudyImage";
 import { Reveal } from "@/components/ui/Reveal";
+import { caseStudyJsonLd } from "@/lib/seo/json-ld";
+import { createPageMetadata } from "@/lib/seo/metadata";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -35,10 +38,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const resolved = legacySlugMap[slug] ?? slug;
   const study = getCaseStudyBySlug(resolved);
   if (!study) return { title: "Not Found" };
-  return {
-    title: `${study.client} — ${study.title} | TwinLabs`,
-    description: study.challenge,
-  };
+  return createPageMetadata({
+    title: `${study.client} — ${study.title}`,
+    description: `${study.challenge} Delivered in ${study.timeline}.`,
+    pathname: `/work/${study.slug}`,
+    ogImage: study.image,
+    ogImageAlt: `${study.client} — ${study.title}`,
+    ogType: "article",
+    keywords: [
+      study.industry,
+      study.title,
+      study.client,
+      "custom software case study",
+      ...study.tech,
+    ],
+  });
 }
 
 export default async function CaseStudyPage({ params }: PageProps) {
@@ -51,6 +65,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
 
   return (
     <article className="surface-band">
+      <JsonLd data={caseStudyJsonLd(study)} />
       <div className="container-main max-w-3xl pt-24 sm:pt-28 md:pt-36">
         <Reveal>
           <Link href="/work" className="link-arrow normal-case tracking-normal">

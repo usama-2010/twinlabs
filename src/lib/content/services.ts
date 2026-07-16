@@ -24,6 +24,7 @@ export const services: Service[] = [
     image: "/images/services/booking.jpg",
     imageAlt: "Planner calendar with appointment dates highlighted",
     industries: ["Dental", "Healthcare", "Veterinary", "Salons", "Gyms", "Estate agents"],
+    landingSlug: "booking-appointment-systems",
   },
   {
     icon: "Users",
@@ -33,6 +34,7 @@ export const services: Service[] = [
     image: "/images/services/portals.jpg",
     imageAlt: "Healthcare professional using a laptop with a stethoscope nearby",
     industries: ["Healthcare", "Veterinary", "Legal", "Accounting", "Pharmacy"],
+    landingSlug: "patient-client-portals",
   },
   {
     icon: "Truck",
@@ -42,6 +44,7 @@ export const services: Service[] = [
     image: "/images/services/field-service.jpg",
     imageAlt: "Construction engineers working on site with safety gear",
     industries: ["Trades", "Logistics", "Facilities", "Construction"],
+    landingSlug: "field-service-job-management",
   },
   {
     icon: "ShoppingBag",
@@ -51,6 +54,7 @@ export const services: Service[] = [
     image: "/images/services/ecommerce.jpg",
     imageAlt: "Shopping cart and bag representing online retail checkout",
     industries: ["Retail", "Furniture", "Food & drink", "Pharmacy"],
+    landingSlug: "e-commerce-payments",
   },
   {
     icon: "BarChart",
@@ -69,6 +73,7 @@ export const services: Service[] = [
     image: "/images/services/automation.jpg",
     imageAlt: "Checklist being ticked off in a notebook for automated tasks",
     industries: ["Dental", "Pharmacy", "Accounting", "Legal", "Nurseries"],
+    landingSlug: "workflow-automation",
   },
   {
     icon: "Smartphone",
