@@ -28,12 +28,12 @@ export function Header() {
   return (
     <>
       <header
-        className={`site-nav fixed top-0 right-0 left-0 z-50 ${scrolled ? "is-scrolled" : ""}`}
+        className={`site-nav fixed top-0 right-0 left-0 z-50 ${scrolled || menuOpen ? "is-scrolled" : ""}`}
       >
-        <div className="container-main flex h-16 items-center justify-between md:h-[4.25rem]">
-          <Logo layout="horizontal" priority />
+        <div className="site-nav-inner container-main">
+          <Logo layout="horizontal" priority className="site-nav-logo" />
 
-          <nav className="hidden items-center gap-8 lg:flex" aria-label="Main">
+          <nav className="site-nav-links" aria-label="Main">
             {navLinks.map((link) => (
               <a key={link.href} href={link.href} className="nav-link">
                 {link.label}
@@ -41,19 +41,19 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-3">
-            <a href="#contact" className="btn-primary group hidden text-sm sm:inline-flex">
+          <div className="site-nav-actions">
+            <a href="/#contact" className="btn-primary btn-nav-cta group">
               Get in touch
-              <ArrowRight className="h-3.5 w-3.5" />
+              <ArrowRight className="h-3 w-3 lg:h-3.5 lg:w-3.5" />
             </a>
             <button
               type="button"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border text-foreground lg:hidden"
+              className="site-nav-menu-btn"
               aria-expanded={menuOpen}
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               onClick={() => setMenuOpen((open) => !open)}
             >
-              {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </button>
           </div>
         </div>
@@ -63,23 +63,14 @@ export function Header() {
         {menuOpen ? (
           <motion.nav
             key="mobile-menu"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.25 }}
-            className="mobile-menu lg:hidden"
+            className="mobile-menu"
             aria-label="Mobile"
           >
-            <button
-              type="button"
-              className="absolute top-5 right-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border"
-              aria-label="Close menu"
-              onClick={() => setMenuOpen(false)}
-            >
-              <X className="h-5 w-5" />
-            </button>
-
-            <ul className="mt-4 flex flex-col">
+            <ul className="flex flex-col">
               {navLinks.map((link, i) => (
                 <motion.li
                   key={link.href}
@@ -103,8 +94,8 @@ export function Header() {
             </ul>
 
             <motion.a
-              href="#contact"
-              className="btn-primary group mt-10 w-full justify-center"
+              href="/#contact"
+              className="btn-primary btn-menu-cta group mt-6 w-full justify-center"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
@@ -115,7 +106,7 @@ export function Header() {
               onClick={() => setMenuOpen(false)}
             >
               Get in touch
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-3.5 w-3.5" />
             </motion.a>
           </motion.nav>
         ) : null}

@@ -14,7 +14,7 @@ const benefits = [
 
 export function DiscoveryBand() {
   return (
-    <section className="alt-band py-20 md:py-28">
+    <section className="alt-band py-16 sm:py-20 md:py-28">
       <div className="container-main">
         <SectionHeader
           eyebrow={discoveryBand.eyebrow}
@@ -39,7 +39,7 @@ export function DiscoveryBand() {
 
             <div className="mt-8 flex flex-col items-center gap-4 border-t border-border pt-8 sm:flex-row sm:justify-between">
               <p className="text-sm text-muted">{discoveryBand.note}</p>
-              <a href={discoveryBand.cta.href} className="btn-primary group shrink-0">
+              <a href={discoveryBand.cta.href} className="btn-primary group w-full shrink-0 sm:w-auto">
                 {discoveryBand.cta.label}
                 <ArrowRight className="h-4 w-4" />
               </a>

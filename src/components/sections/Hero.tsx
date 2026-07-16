@@ -30,8 +30,8 @@ export function Hero() {
   const stackLines = ["Scoped upfront.", "Fixed quotes.", "You own the code."];
 
   return (
-    <section className="hero-enso relative flex min-h-svh flex-col justify-between overflow-hidden">
-      <div className="container-main relative z-10 pt-28 md:pt-32 lg:pt-36">
+    <section className="hero-enso relative overflow-hidden">
+      <div className="container-main relative z-10 pt-24 sm:pt-28 md:pt-32 lg:pt-36 pb-0">
         <motion.p
           initial={reduce ? false : { opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -85,7 +85,7 @@ export function Hero() {
           initial={reduce ? false : { opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: silk, delay: 0.55 }}
-          className="mt-10 flex flex-wrap items-center gap-4 md:mt-12"
+          className="enso-hero-actions mt-10 md:mt-12"
         >
           <a href={hero.primaryCta.href} className="btn-primary group">
             {hero.primaryCta.label}

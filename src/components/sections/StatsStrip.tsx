@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 
 export function StatsStrip() {
   return (
-    <section className="alt-band py-20 md:py-24">
+    <section className="alt-band py-16 sm:py-20 md:py-24">
       <div className="container-main">
         <SectionHeader
           title={statsSection.eyebrow}
@@ -17,7 +17,7 @@ export function StatsStrip() {
         />
 
         <StaggerReveal
-          className="mt-14 grid grid-cols-2 gap-10 md:grid-cols-4 md:gap-8"
+          className="mt-14 grid grid-cols-2 gap-6 sm:gap-10 md:grid-cols-4 md:gap-8"
           stagger={0.1}
           delay={0.05}
         >

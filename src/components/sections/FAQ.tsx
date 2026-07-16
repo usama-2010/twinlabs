@@ -23,7 +23,7 @@ export function FAQ() {
   };
 
   return (
-    <section id="faq" className="surface-band py-20 md:py-28">
+    <section id="faq" className="surface-band py-16 sm:py-20 md:py-28">
       <div className="container-main max-w-5xl">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <SectionHeader title="FAQ" subtitle={faqSection.subtitle} />

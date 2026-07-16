@@ -12,7 +12,7 @@ const featured = services.slice(0, 3);
 
 export function Services() {
   return (
-    <section id="services" className="surface-band py-20 md:py-28">
+    <section id="services" className="surface-band py-16 sm:py-20 md:py-28">
       <div className="container-main">
         <SectionHeader
           eyebrow={servicesSection.eyebrow}

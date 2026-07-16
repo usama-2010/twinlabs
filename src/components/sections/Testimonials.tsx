@@ -7,7 +7,7 @@ import { Reveal } from "@/components/ui/Reveal";
 
 export function Testimonials() {
   return (
-    <section id="testimonials" className="surface-band py-20 md:py-28">
+    <section id="testimonials" className="surface-band py-16 sm:py-20 md:py-28">
       <div className="container-main">
         <SectionHeader
           eyebrow="Testimonials"

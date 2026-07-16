@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { DM_Sans, Playfair_Display } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -48,19 +48,26 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en-GB"
+      data-theme="light"
       className={`${dmSans.variable} ${playfair.variable} h-full`}
       suppressHydrationWarning
     >
       <head>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var s=localStorage.getItem("theme");var t=s==="light"||s==="dark"||s==="system"?s:"light";var r=t==="system"?window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light":t;document.documentElement.setAttribute("data-theme",r);document.documentElement.style.colorScheme=r}catch(e){}})();`,
+            __html: `(function(){document.documentElement.setAttribute("data-theme","light");document.documentElement.style.colorScheme="light";try{localStorage.setItem("theme","light")}catch(e){}})();`,
           }}
         />
       </head>

@@ -60,7 +60,7 @@ export function Contact() {
   const input = "form-input form-input-light";
 
   return (
-    <section id="contact" className="surface-band border-t border-border py-20 md:py-28">
+    <section id="contact" className="surface-band border-t border-border py-16 sm:py-20 md:py-28">
       <div className="container-main grid gap-14 lg:grid-cols-2 lg:gap-20">
         <div>
           <SectionHeader
@@ -192,7 +192,7 @@ export function Contact() {
                 <button
                   type="submit"
                   disabled={status === "submitting"}
-                  className="btn-primary group mt-8 disabled:opacity-50"
+                  className="btn-primary group mt-8 w-full justify-center disabled:opacity-50 sm:w-auto"
                 >
                   {status === "submitting" ? "Sending…" : contact.cta}
                   <ArrowRight className="h-4 w-4" />

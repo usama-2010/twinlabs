@@ -6,7 +6,7 @@ import { Reveal } from "@/components/ui/Reveal";
 
 export function TechStack() {
   return (
-    <section className="alt-band py-20 md:py-24">
+    <section className="alt-band py-16 sm:py-20 md:py-24">
       <div className="container-main">
         <SectionHeader
           eyebrow={techStackSection.eyebrow}

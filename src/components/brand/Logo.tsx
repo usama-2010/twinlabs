@@ -7,14 +7,14 @@ const logos = {
     alt: "TwinLabs",
     width: 790,
     height: 128,
-    className: "h-8 w-auto sm:h-9",
+    className: "h-7 w-auto sm:h-8 lg:h-9",
   },
   stacked: {
     src: "/brand/logo-stacked.png",
     alt: "TwinLabs — Web Development, Automation, Digital Solutions",
     width: 664,
     height: 438,
-    className: "h-28 w-auto sm:h-32",
+    className: "h-20 w-auto sm:h-24 md:h-28 lg:h-32",
   },
 } as const;
 
@@ -48,7 +48,7 @@ export function Logo({
 
   if (linked) {
     return (
-      <Link href={href} className="inline-flex transition-opacity hover:opacity-85">
+      <Link href={href} className="inline-flex shrink-0 transition-opacity hover:opacity-85">
         {content}
       </Link>
     );

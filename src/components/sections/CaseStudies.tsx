@@ -41,7 +41,7 @@ export function CaseStudies() {
   return (
     <section
       id="work"
-      className="surface-band py-20 md:py-28"
+      className="surface-band py-16 sm:py-20 md:py-28"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -53,7 +53,7 @@ export function CaseStudies() {
           subtitle={caseStudiesSection.subtitle}
         />
 
-        <div className="mt-14 grid gap-12 lg:grid-cols-2 lg:items-start lg:gap-16">
+        <div className="mt-14 grid gap-8 lg:grid-cols-2 lg:items-start lg:gap-16">
           <Reveal>
             <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-border bg-seafoam-100 shadow-sm">
               <AnimatePresence mode="wait">
@@ -89,7 +89,7 @@ export function CaseStudies() {
                       data-active={isActive}
                       onClick={() => goTo(i)}
                     >
-                      <h3 className="text-base font-medium md:text-lg">
+                      <h3 className="case-tab-title">
                         {study.client} — {study.title}
                       </h3>
                       <div className="progress-bar mt-3">

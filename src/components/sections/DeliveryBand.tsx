@@ -27,7 +27,7 @@ export function DeliveryBand() {
           </Marquee>
         </Reveal>
 
-        <div className="mt-14 grid grid-cols-2 gap-8 md:grid-cols-4 md:gap-6">
+        <div className="mt-14 grid grid-cols-2 gap-6 sm:gap-8 md:grid-cols-4 md:gap-6">
           {stats.map((stat) => (
             <div key={stat.label}>
               <p className="stat-value text-white">{stat.value}</p>

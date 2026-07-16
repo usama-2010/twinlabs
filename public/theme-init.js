@@ -1,17 +1,7 @@
 (function () {
+  document.documentElement.setAttribute("data-theme", "light");
+  document.documentElement.style.colorScheme = "light";
   try {
-    var stored = localStorage.getItem("theme");
-    var theme =
-      stored === "light" || stored === "dark" || stored === "system"
-        ? stored
-        : "light";
-    var resolved =
-      theme === "system"
-        ? window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light"
-        : theme;
-    document.documentElement.setAttribute("data-theme", resolved);
-    document.documentElement.style.colorScheme = resolved;
+    localStorage.setItem("theme", "light");
   } catch {}
 })();

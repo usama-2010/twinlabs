@@ -10,11 +10,11 @@ export const siteConfig = {
 };
 
 export const navLinks: NavLink[] = [
-  { label: "Work", href: "#work" },
-  { label: "Services", href: "#services" },
-  { label: "Testimonials", href: "#testimonials" },
-  { label: "FAQ", href: "#faq" },
-  { label: "Contact", href: "#contact" },
+  { label: "Work", href: "/#work" },
+  { label: "Services", href: "/#services" },
+  { label: "Testimonials", href: "/#testimonials" },
+  { label: "FAQ", href: "/#faq" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export const hero = {
@@ -30,8 +30,8 @@ export const hero = {
     "Custom software for any business — whatever your industry or market.",
   subheadline:
     "TwinLabs is a custom software studio. We help organisations of every size ship booking systems, client portals, field apps, and e-commerce — scoped upfront, delivered in weeks.",
-  primaryCta: { label: "Get in touch", href: "#contact" },
-  secondaryCta: { label: "Explore our services", href: "#services" },
+  primaryCta: { label: "Get in touch", href: "/#contact" },
+  secondaryCta: { label: "Explore our services", href: "/#services" },
   trust: {
     label: "Built for every industry",
     items: [] as string[],
@@ -61,8 +61,8 @@ export const ctaBand = {
   titleEm: "with software that fits.",
   subtext:
     "Tell us what you need built. We will review your operations and reply with a written scope and fixed quote if we are a fit.",
-  primary: { label: "Get in touch", href: "#contact" },
-  secondary: { label: "Explore our services", href: "#services" },
+  primary: { label: "Get in touch", href: "/#contact" },
+  secondary: { label: "Explore our services", href: "/#services" },
 };
 
 export const discoveryBand = {
@@ -71,7 +71,7 @@ export const discoveryBand = {
   titleEm: "before you sign anything.",
   subtext:
     "We map your operations and pain points, then send a fixed quote within 48 hours — no commitment required.",
-  cta: { label: "Request a quote", href: "#contact" },
+  cta: { label: "Request a quote", href: "/#contact" },
   note: "Reply within 24 hours · NDA on request",
 };
 
@@ -117,8 +117,7 @@ export const contact = {
 export const footer = {
   tagline: "United Kingdom",
   links: [
-    { label: "All work", href: "/work" },
     { label: "Email", href: "mailto:info@twinlabs.co.uk" },
-    { label: "Get in touch", href: "#contact" },
+    { label: "Get in touch", href: "/#contact" },
   ],
 };

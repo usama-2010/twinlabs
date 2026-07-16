@@ -51,7 +51,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
 
   return (
     <article className="surface-band">
-      <div className="container-main max-w-3xl pt-28 md:pt-36">
+      <div className="container-main max-w-3xl pt-24 sm:pt-28 md:pt-36">
         <Reveal>
           <Link href="/work" className="link-arrow normal-case tracking-normal">
             ← All work
@@ -73,7 +73,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
         </div>
       </Reveal>
 
-      <dl className="container-main mx-auto mt-12 flex max-w-2xl justify-center gap-10 text-center md:gap-16">
+      <dl className="case-metrics container-main mx-auto mt-12 max-w-2xl">
         {study.metrics.map((m) => (
           <div key={m.label}>
             <dt className="stat-value">{m.value}</dt>
@@ -119,7 +119,7 @@ export default async function CaseStudyPage({ params }: PageProps) {
 
         {review ? (
           <Reveal delay={0.2}>
-            <div className="quote-card flex gap-4 p-6">
+            <div className="quote-card flex flex-col gap-4 p-5 sm:flex-row sm:p-6">
               <div className="initials-badge shrink-0">{review.initials}</div>
               <div>
                 <p className="leading-relaxed text-foreground">&ldquo;{review.quote}&rdquo;</p>

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function WorkPage() {
   return (
-    <div className="surface-band pt-28 pb-20 md:pt-36">
+    <div className="surface-band pt-24 pb-16 sm:pt-28 sm:pb-20 md:pt-36">
       <div className="container-main max-w-3xl">
         <Reveal>
           <p className="section-eyebrow">All work</p>

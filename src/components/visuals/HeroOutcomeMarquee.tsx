@@ -6,7 +6,7 @@ export function HeroOutcomeMarquee() {
   const items = [...heroOutcomes, ...heroOutcomes];
 
   return (
-    <div className="enso-marquee-root pb-8 md:pb-10">
+    <div className="enso-marquee-root">
       <div className="enso-marquee-track">
         {items.map((item, i) => (
           <article key={`${item.value}-${i}`} className="enso-outcome-card">
