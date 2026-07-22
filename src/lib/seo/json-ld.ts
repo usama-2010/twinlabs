@@ -206,3 +206,13 @@ export function indexListingJsonLd(
     }
   );
 }
+
+export function aboutIndexJsonLd(): string {
+  return graph(
+    organizationSchema(),
+    breadcrumbSchema([
+      { name: "Home", path: "/" },
+      { name: "About", path: "/about" },
+    ])
+  );
+}

@@ -45,6 +45,15 @@ export function Services() {
                 <p className="mt-4 text-base leading-relaxed text-muted">
                   {service.description}
                 </p>
+                {service.proof ? (
+                  <p className="mt-3 text-sm leading-relaxed">
+                    <span className="font-medium text-teal-800">{service.proof.stat}</span>
+                    <span className="text-muted"> · </span>
+                    <Link href={service.proof.href} className="text-muted underline-offset-2 hover:text-foreground hover:underline">
+                      {service.proof.source}
+                    </Link>
+                  </p>
+                ) : null}
                 <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2">
                   {service.landingSlug ? (
                     <Link

@@ -37,18 +37,18 @@ export function FAQ() {
         </div>
 
         <Reveal delay={0.08}>
-          <div className="faq-grid mt-12">
+          <div className="faq-grid mx-auto mt-12 max-w-3xl">
             {faqs.map((faq, i) => {
               const isOpen = expandAll || open === i;
               return (
                 <div key={faq.question} className="faq-item" data-open={isOpen}>
                   <button
                     type="button"
-                    className="flex w-full items-start justify-between gap-4 p-5 text-left"
+                    className="flex w-full min-h-[3.75rem] items-center justify-between gap-4 px-5 py-4 text-left sm:px-6"
                     onClick={() => toggle(i)}
                     aria-expanded={isOpen}
                   >
-                    <span className="text-base font-medium leading-snug">
+                    <span className="text-base font-medium leading-snug tracking-tight">
                       {faq.question}
                     </span>
                     <ChevronDown
@@ -70,7 +70,7 @@ export function FAQ() {
                         }}
                         className="overflow-hidden"
                       >
-                        <p className="px-5 pb-5 text-sm leading-relaxed text-muted">
+                        <p className="border-t border-border px-5 pb-5 pt-4 text-sm leading-relaxed text-muted sm:px-6">
                           {faq.answer}
                         </p>
                       </motion.div>

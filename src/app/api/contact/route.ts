@@ -23,9 +23,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const { name, businessName, email, phone, budget, description } = result.data;
+    const { name, businessName, email, phone, projectPackage, budget, description } = result.data;
     const contactEmail = process.env.CONTACT_EMAIL ?? "info@twinlabs.co.uk";
-    const enquiryData = { name, businessName, email, phone, budget, description };
+    const enquiryData = { name, businessName, email, phone, projectPackage, budget, description };
     const confirmationData = { name, businessName, description };
 
     if (process.env.RESEND_API_KEY) {

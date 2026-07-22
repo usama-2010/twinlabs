@@ -13,6 +13,17 @@ export const navLinks: NavLink[] = [
   { label: "Work", href: "/#work" },
   { label: "Services", href: "/#services" },
   { label: "Testimonials", href: "/#testimonials" },
+  { label: "About", href: "/about" },
+  { label: "FAQ", href: "/#faq" },
+  { label: "Contact", href: "/#contact" },
+];
+
+/** Footer site column — pages, not duplicates of header anchors. */
+export const footerSiteLinks: NavLink[] = [
+  { label: "Case studies", href: "/work" },
+  { label: "Services", href: "/services" },
+  { label: "Industries", href: "/industries" },
+  { label: "About", href: "/about" },
   { label: "FAQ", href: "/#faq" },
   { label: "Contact", href: "/#contact" },
 ];
@@ -27,9 +38,9 @@ export const hero = {
     "Ship what works.",
   ],
   eyebrow:
-    "Custom software for any business — whatever your industry or market.",
+    "Custom software that cuts admin, missed bookings, and manual work — for UK businesses.",
   subheadline:
-    "TwinLabs is a custom software studio. We help organisations of every size ship booking systems, client portals, field apps, and e-commerce — scoped upfront, delivered in weeks.",
+    "TwinLabs builds booking systems, client portals, and field apps for SMEs — scoped in writing, quoted upfront, delivered in weeks. You work directly with the founders.",
   primaryCta: { label: "Get in touch", href: "/#contact" },
   secondaryCta: { label: "Explore our services", href: "/#services" },
   trust: {

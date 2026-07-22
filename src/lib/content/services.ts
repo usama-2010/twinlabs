@@ -25,6 +25,11 @@ export const services: Service[] = [
     imageAlt: "Planner calendar with appointment dates highlighted",
     industries: ["Dental", "Healthcare", "Veterinary", "Salons", "Gyms", "Estate agents"],
     landingSlug: "booking-appointment-systems",
+    proof: {
+      stat: "70% fewer no-shows",
+      source: "The London Hair Co.",
+      href: "/work/london-hair-co-booking",
+    },
   },
   {
     icon: "Users",
@@ -35,6 +40,11 @@ export const services: Service[] = [
     imageAlt: "Healthcare professional using a laptop with a stethoscope nearby",
     industries: ["Healthcare", "Veterinary", "Legal", "Accounting", "Pharmacy"],
     landingSlug: "patient-client-portals",
+    proof: {
+      stat: "90% client adoption in 3 months",
+      source: "Sharma & Co. Accountants",
+      href: "/work/sharma-co-client-portal",
+    },
   },
   {
     icon: "Truck",
@@ -45,6 +55,11 @@ export const services: Service[] = [
     imageAlt: "Construction engineers working on site with safety gear",
     industries: ["Trades", "Logistics", "Facilities", "Construction"],
     landingSlug: "field-service-job-management",
+    proof: {
+      stat: "73% less admin time",
+      source: "Morrison & Sons Plumbing",
+      href: "/work/morrison-sons-job-management",
+    },
   },
   {
     icon: "ShoppingBag",

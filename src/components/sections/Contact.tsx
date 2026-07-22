@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { contact } from "@/lib/content/site";
+import { PackageSelect } from "@/components/ui/PackageSelect";
 import { SectionHeader } from "@/components/ui/SectionHeader";
 import { Reveal } from "@/components/ui/Reveal";
 import {
@@ -28,6 +29,7 @@ export function Contact() {
       businessName: fd.get("businessName") as string,
       email: fd.get("email") as string,
       phone: fd.get("phone") as string,
+      projectPackage: fd.get("projectPackage") as string,
       budget: fd.get("budget") as string,
       description: fd.get("description") as string,
     };
@@ -88,7 +90,7 @@ export function Contact() {
           </dl>
         </div>
 
-        <Reveal delay={0.08}>
+        <Reveal delay={0.08} className="min-w-0">
           <AnimatePresence mode="wait">
             {status === "success" ? (
               <motion.div
@@ -117,7 +119,7 @@ export function Contact() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 onSubmit={handleSubmit}
-                className="card-surface p-6 md:p-8"
+                className="card-surface min-w-0 p-4 sm:p-6 md:p-8"
                 noValidate
               >
                 <h3 className="text-lg font-semibold">Get in touch</h3>
@@ -125,8 +127,8 @@ export function Contact() {
                   Tell us about your project — we will come back within one working day.
                 </p>
 
-                <div className="mt-8 space-y-6">
-                  <div className="grid gap-6 sm:grid-cols-2">
+                <div className="mt-6 space-y-5 sm:mt-8 sm:space-y-6">
+                  <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
                     <label className="block text-sm">
                       <span className="mono-label">Name</span>
                       <input name="name" className={input} />
@@ -142,7 +144,7 @@ export function Contact() {
                       ) : null}
                     </label>
                   </div>
-                  <div className="grid gap-6 sm:grid-cols-2">
+                  <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
                     <label className="block text-sm">
                       <span className="mono-label">Email</span>
                       <input name="email" type="email" className={input} />
@@ -158,6 +160,7 @@ export function Contact() {
                       ) : null}
                     </label>
                   </div>
+                  <PackageSelect error={errors.projectPackage} />
                   <label className="block text-sm">
                     <span className="mono-label">Estimated budget</span>
                     <input
@@ -165,7 +168,7 @@ export function Contact() {
                       type="text"
                       inputMode="decimal"
                       className={input}
-                      placeholder="e.g. £15,000"
+                      placeholder="e.g. £8k"
                     />
                     {errors.budget ? (
                       <span className="mt-1 block text-xs text-red-600">{errors.budget}</span>

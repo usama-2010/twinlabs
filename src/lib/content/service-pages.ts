@@ -58,7 +58,7 @@ export const servicePages: LandingPage[] = [
       {
         title: "Typical project range",
         body:
-          "Most SME builds sit between £8,000 and £45,000 depending on scope, integrations, and complexity. Timelines are typically 6–12 weeks for booking systems, portals, and field apps.",
+          "Most SME builds sit between £4k and £22k depending on scope, integrations, and complexity. Timelines are typically 6–12 weeks for booking systems, portals, and field apps.",
       },
     ],
     relatedWorkSlugs: [

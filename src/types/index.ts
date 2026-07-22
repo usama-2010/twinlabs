@@ -12,6 +12,11 @@ export interface Service {
   industries?: string[];
   /** SEO landing page slug under /services */
   landingSlug?: string;
+  proof?: {
+    stat: string;
+    source: string;
+    href: string;
+  };
 }
 
 export interface Industry {

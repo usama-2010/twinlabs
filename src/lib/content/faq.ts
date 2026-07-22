@@ -9,7 +9,7 @@ export const faqs: FAQ[] = [
   {
     question: "How much does custom software cost?",
     answer:
-      "Most SME projects sit between £8,000 and £45,000 depending on scope, integrations, and complexity. We'll give you a clear quote after our discovery call — no vague estimates or surprise invoices later.",
+      "Most SME projects sit between £4k and £22k depending on scope — see the pricing section above. Client portals and focused tools start around £4k–£6k; booking and operations systems usually land at £7k–£12k; mobile and platform builds run £14k–£22k. We send a fixed quote in writing after discovery, before you commit.",
   },
   {
     question: "How long does a project take?",

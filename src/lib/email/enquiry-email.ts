@@ -8,12 +8,14 @@ import {
   renderEmailQuote,
   renderEmailSubtext,
 } from "@/lib/email/template";
+import { getContactPackageLabel } from "@/lib/content/pricing";
 
 export type EnquiryEmailData = {
   name: string;
   businessName: string;
   email: string;
   phone: string;
+  projectPackage: string;
   budget: string;
   description: string;
 };
@@ -24,6 +26,7 @@ export function buildEnquiryEmailText(data: EnquiryEmailData): string {
     `Business: ${data.businessName}`,
     `Email: ${data.email}`,
     `Phone: ${data.phone}`,
+    `Package: ${getContactPackageLabel(data.projectPackage)}`,
     `Budget: ${data.budget}`,
     ``,
     `Description:`,
@@ -41,6 +44,7 @@ export function buildEnquiryEmailHtml(data: EnquiryEmailData): string {
     renderEmailField("Business", data.businessName),
     renderEmailField("Email", data.email),
     renderEmailField("Phone", data.phone),
+    renderEmailField("Package", getContactPackageLabel(data.projectPackage)),
     renderEmailField("Budget", data.budget),
     `</table>`,
     renderEmailLabel("Project details"),

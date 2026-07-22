@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { siteConfig, navLinks, footer } from "@/lib/content/site";
+import { siteConfig, footerSiteLinks, footer } from "@/lib/content/site";
 import { Logo } from "@/components/brand/Logo";
 
 export function Footer() {
@@ -26,28 +26,19 @@ export function Footer() {
           <div className="site-footer-col">
             <p className="mono-label">Site</p>
             <ul className="site-footer-links mt-3 space-y-2 text-muted sm:mt-4 sm:space-y-2.5">
-              {navLinks.map((l) => (
+              {footerSiteLinks.map((l) => (
                 <li key={l.href}>
-                  <a href={l.href} className="link-hover transition-colors hover:text-foreground">
-                    {l.label}
-                  </a>
+                  {l.href.startsWith("/#") ? (
+                    <a href={l.href} className="link-hover transition-colors hover:text-foreground">
+                      {l.label}
+                    </a>
+                  ) : (
+                    <Link href={l.href} className="link-hover transition-colors hover:text-foreground">
+                      {l.label}
+                    </Link>
+                  )}
                 </li>
               ))}
-              <li>
-                <Link href="/work" className="link-hover transition-colors hover:text-foreground">
-                  All work
-                </Link>
-              </li>
-              <li>
-                <Link href="/services" className="link-hover transition-colors hover:text-foreground">
-                  Services
-                </Link>
-              </li>
-              <li>
-                <Link href="/industries" className="link-hover transition-colors hover:text-foreground">
-                  Industries
-                </Link>
-              </li>
             </ul>
           </div>
 
