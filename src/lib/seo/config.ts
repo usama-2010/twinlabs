@@ -1,4 +1,5 @@
 import { siteConfig } from "@/lib/content/site";
+import { socialShare } from "@/lib/seo/social";
 
 export const seoConfig = {
   siteName: siteConfig.name,
@@ -9,9 +10,12 @@ export const seoConfig = {
     "Custom Software Development UK | Booking Systems, Portals & Field Apps",
   titleTemplate: "%s | TwinLabs",
   defaultDescription: siteConfig.description,
-  defaultOgImage: "/images/hero-london.jpg",
-  defaultOgImageAlt:
-    "TwinLabs — custom software studio for UK businesses, booking systems and client portals",
+  /** Homepage / default link preview (Open Graph, Meta, Twitter, LinkedIn). */
+  socialTitle: socialShare.shortTitle,
+  socialDescription: socialShare.description,
+  socialImageAlt: socialShare.imageAlt,
+  defaultOgImage: "/opengraph-image",
+  defaultOgImageAlt: socialShare.imageAlt,
   twitterHandle: undefined as string | undefined,
   keywords: [
     "custom software development UK",

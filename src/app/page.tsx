@@ -19,6 +19,8 @@ export const metadata: Metadata = createPageMetadata({
   title: seoConfig.defaultTitle,
   titleAbsolute: true,
   description: seoConfig.defaultDescription,
+  ogTitle: seoConfig.socialTitle,
+  ogDescription: seoConfig.socialDescription,
   pathname: "/",
 });
 

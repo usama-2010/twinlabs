@@ -7,6 +7,11 @@ type PageMetadataInput = {
   title: string;
   description: string;
   pathname: string;
+  /** Override Open Graph title (defaults to `title`). */
+  ogTitle?: string;
+  /** Override Open Graph / Twitter description (defaults to `description`). */
+  ogDescription?: string;
+  /** Skip auto-generated /opengraph-image and use a custom path instead. */
   ogImage?: string;
   ogImageAlt?: string;
   ogType?: OgType;
@@ -36,9 +41,13 @@ export function createPageMetadata({
   noIndex = false,
   keywords,
   titleAbsolute = false,
+  ogTitle,
+  ogDescription,
 }: PageMetadataInput): Metadata {
   const canonical = absoluteUrl(pathname);
   const og = buildOgImage(ogImage, ogImageAlt);
+  const shareTitle = ogTitle ?? title;
+  const shareDescription = ogDescription ?? description;
 
   return {
     title: titleAbsolute ? { absolute: title } : title,
@@ -48,8 +57,8 @@ export function createPageMetadata({
       canonical,
     },
     openGraph: {
-      title,
-      description,
+      title: shareTitle,
+      description: shareDescription,
       url: canonical,
       siteName: seoConfig.siteName,
       locale: seoConfig.locale,
@@ -58,8 +67,8 @@ export function createPageMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title,
-      description,
+      title: shareTitle,
+      description: shareDescription,
       images: [og.url],
       ...(seoConfig.twitterHandle
         ? { site: seoConfig.twitterHandle, creator: seoConfig.twitterHandle }
@@ -104,8 +113,8 @@ export function createRootMetadata(): Metadata {
       canonical: seoConfig.url,
     },
     openGraph: {
-      title: seoConfig.defaultTitle,
-      description: seoConfig.defaultDescription,
+      title: seoConfig.socialTitle,
+      description: seoConfig.socialDescription,
       url: seoConfig.url,
       siteName: seoConfig.siteName,
       locale: seoConfig.locale,
@@ -116,8 +125,8 @@ export function createRootMetadata(): Metadata {
     },
     twitter: {
       card: "summary_large_image",
-      title: seoConfig.defaultTitle,
-      description: seoConfig.defaultDescription,
+      title: seoConfig.socialTitle,
+      description: seoConfig.socialDescription,
       images: [absoluteUrl(seoConfig.defaultOgImage)],
     },
     robots: {
