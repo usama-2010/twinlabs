@@ -2744,48 +2744,6 @@ body {
   overflow: visible;
 }
 
-.outreach-mark-loader-path {
-  fill: none;
-  stroke: var(--teal-800);
-  stroke-width: 8;
-  stroke-linecap: butt;
-  stroke-linejoin: miter;
-  stroke-miterlimit: 4;
-  stroke-dasharray: 22 78;
-  animation: outreach-mark-draw 1.8s ease-in-out infinite;
-}
-
-.outreach-mark-loader-path.is-static {
-  animation: none;
-  stroke-dasharray: none;
-  stroke-dashoffset: 0;
-}
-
-@keyframes outreach-mark-draw {
-  0% {
-    stroke-dashoffset: 100;
-    opacity: 0.55;
-  }
-
-  45% {
-    stroke-dashoffset: 0;
-    opacity: 1;
-  }
-
-  100% {
-    stroke-dashoffset: -100;
-    opacity: 0.55;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .outreach-mark-loader-path {
-    animation: none;
-    stroke-dasharray: none;
-    stroke-dashoffset: 0;
-  }
-}
-
 .outreach-loader-label {
   font-size: 0.875rem;
   color: var(--muted);
