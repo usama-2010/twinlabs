@@ -1,8 +1,5 @@
 import type { Viewport } from "next";
 import { DM_Sans, Playfair_Display } from "next/font/google";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { createRootMetadata } from "@/lib/seo/metadata";
 import "./globals.css";
 
@@ -44,12 +41,8 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="relative min-h-full flex flex-col bg-background font-sans text-foreground antialiased">
-        <ThemeProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </ThemeProvider>
+      <body className="relative min-h-full bg-background font-sans text-foreground antialiased">
+        {children}
       </body>
     </html>
   );

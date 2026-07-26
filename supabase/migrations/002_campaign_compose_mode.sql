@@ -1,0 +1,1 @@
+ALTER TABLE campaigns ADD COLUMN IF NOT EXISTS compose_mode TEXT NOT NULL DEFAULT 'template';

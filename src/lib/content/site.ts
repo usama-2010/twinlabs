@@ -26,6 +26,7 @@ export const footerSiteLinks: NavLink[] = [
   { label: "About", href: "/about" },
   { label: "FAQ", href: "/#faq" },
   { label: "Contact", href: "/#contact" },
+  { label: "Outreach", href: "/outreach" },
 ];
 
 export const hero = {
