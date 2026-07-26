@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Lottie from "lottie-react";
-import infinityLoaderAnimation from "@/assets/lottie/infinity-loader.json";
+import { TwinLabsMarkLoader } from "@/components/outreach/TwinLabsMarkLoader";
 
 type OutreachLoaderProps = {
   label?: string;
@@ -24,13 +22,6 @@ export function OutreachLoader({
   className = "",
 }: OutreachLoaderProps) {
   const dimension = sizePixels[size];
-  const [reduceMotion, setReduceMotion] = useState(false);
-
-  useEffect(() => {
-    setReduceMotion(
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    );
-  }, []);
 
   const content = (
     <div
@@ -39,18 +30,7 @@ export function OutreachLoader({
       aria-live="polite"
       aria-busy="true"
     >
-      <div
-        className="outreach-loader-lottie"
-        style={{ width: dimension, height: dimension }}
-        aria-hidden="true"
-      >
-        <Lottie
-          animationData={infinityLoaderAnimation}
-          loop={!reduceMotion}
-          autoplay={!reduceMotion}
-          style={{ width: "100%", height: "100%" }}
-        />
-      </div>
+      <TwinLabsMarkLoader size={dimension} />
 
       {label ? <p className="outreach-loader-label">{label}</p> : null}
       <span className="sr-only">{label ?? "Loading"}</span>
@@ -58,15 +38,11 @@ export function OutreachLoader({
   );
 
   if (variant === "overlay") {
-    return (
-      <div className="outreach-loader-overlay">{content}</div>
-    );
+    return <div className="outreach-loader-overlay">{content}</div>;
   }
 
   if (variant === "card") {
-    return (
-      <div className="outreach-loader-card">{content}</div>
-    );
+    return <div className="outreach-loader-card">{content}</div>;
   }
 
   return content;
