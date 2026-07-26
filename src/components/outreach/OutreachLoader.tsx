@@ -59,17 +59,13 @@ export function OutreachLoader({
 
   if (variant === "overlay") {
     return (
-      <div className="outreach-loader-overlay">
-        <div className="outreach-loader-panel">{content}</div>
-      </div>
+      <div className="outreach-loader-overlay">{content}</div>
     );
   }
 
   if (variant === "card") {
     return (
-      <div className="outreach-card flex min-h-[12rem] items-center justify-center p-8">
-        {content}
-      </div>
+      <div className="outreach-loader-card">{content}</div>
     );
   }
 
