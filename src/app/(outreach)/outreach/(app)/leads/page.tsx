@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { OutreachPageHeader } from "@/components/outreach/OutreachPageHeader";
+import { OutreachLoader } from "@/components/outreach/OutreachLoader";
 import type { Lead } from "@/lib/outreach/types";
 
 const FILTERS = [
@@ -87,8 +88,8 @@ export default function OutreachLeadsPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={6} className="py-10 text-center text-muted">
-                  Loading…
+                <td colSpan={6} className="py-12">
+                  <OutreachLoader label="Loading leads…" />
                 </td>
               </tr>
             ) : leads.length === 0 ? (

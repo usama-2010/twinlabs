@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Activity, ExternalLink, LogOut, Upload, Users } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 
@@ -13,12 +13,10 @@ const NAV = [
 
 export function OutreachShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
 
   async function handleLogout() {
     await fetch("/api/outreach/logout", { method: "POST" });
-    router.push("/outreach/login");
-    router.refresh();
+    window.location.assign("/outreach/login");
   }
 
   return (

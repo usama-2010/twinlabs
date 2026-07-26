@@ -5,6 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { EmailBodyPreview } from "@/components/outreach/EmailBodyPreview";
 import { EmailBodyPreviewShimmer } from "@/components/outreach/EmailBodyPreviewShimmer";
 import { ImportProgressPanel } from "@/components/outreach/ImportProgressPanel";
+import { OutreachLoader } from "@/components/outreach/OutreachLoader";
 import { OutreachPageHeader } from "@/components/outreach/OutreachPageHeader";
 import { PrioritySelect } from "@/components/outreach/PrioritySelect";
 import { RewriteEmailButton } from "@/components/outreach/RewriteEmailButton";
@@ -40,6 +41,7 @@ export default function OutreachUploadPage() {
   const [starting, setStarting] = useState(false);
   const [startResult, setStartResult] = useState<string>("");
   const [setup, setSetup] = useState<SetupStatus | null>(null);
+  const [setupLoading, setSetupLoading] = useState(true);
   const [rewritingLeadId, setRewritingLeadId] = useState<string | null>(null);
   const [rewriteError, setRewriteError] = useState("");
 
@@ -50,7 +52,8 @@ export default function OutreachUploadPage() {
         setSetup(data);
         setUseAi(Boolean(data.gemini));
       })
-      .catch(() => null);
+      .catch(() => null)
+      .finally(() => setSetupLoading(false));
   }, []);
 
   function handleFileChange(selected: File | null) {
@@ -212,11 +215,17 @@ export default function OutreachUploadPage() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-8">
+      {starting ? <OutreachLoader variant="overlay" label="Starting send…" size="lg" /> : null}
+
       <OutreachPageHeader
         title="Upload leads"
         subtitle="Import a spreadsheet, preview composed emails, then send in daily batches."
       />
 
+      {setupLoading ? (
+        <OutreachLoader variant="card" label="Checking setup…" size="lg" />
+      ) : (
+        <>
       {setup && (!setup.database || !setup.resend) ? (
         <div className="outreach-alert">
           {!setup.database ? (
@@ -435,6 +444,8 @@ export default function OutreachUploadPage() {
           </div>
         </div>
       ) : null}
+        </>
+      )}
     </div>
   );
 }

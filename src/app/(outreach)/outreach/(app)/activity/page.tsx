@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
 import { OutreachPageHeader } from "@/components/outreach/OutreachPageHeader";
+import { OutreachLoader } from "@/components/outreach/OutreachLoader";
 import type { Campaign, CampaignLead } from "@/lib/outreach/types";
 
 type ActivityResponse = {
@@ -102,6 +103,14 @@ export default function OutreachActivityPage() {
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
+      {isDeleting ? (
+        <OutreachLoader
+          variant="overlay"
+          label={deletingAll ? "Deleting all campaigns…" : "Deleting campaign…"}
+          size="lg"
+        />
+      ) : null}
+
       <div className="flex flex-wrap items-start justify-between gap-4">
         <OutreachPageHeader
           title="Activity"
@@ -127,7 +136,7 @@ export default function OutreachActivityPage() {
       ) : null}
 
       {loading ? (
-        <p className="text-sm text-muted">Loading…</p>
+        <OutreachLoader variant="card" label="Loading activity…" size="lg" />
       ) : (
         <>
           {(data?.campaigns ?? []).length === 0 ? (
