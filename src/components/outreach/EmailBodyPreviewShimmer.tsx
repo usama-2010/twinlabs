@@ -4,10 +4,12 @@ function ShimmerBar({ className = "" }: { className?: string }) {
 
 type EmailBodyPreviewShimmerProps = {
   className?: string;
+  label?: string;
 };
 
 export function EmailBodyPreviewShimmer({
   className = "",
+  label = "Rewriting with AI…",
 }: EmailBodyPreviewShimmerProps) {
   return (
     <div
@@ -15,7 +17,7 @@ export function EmailBodyPreviewShimmer({
       role="status"
       aria-live="polite"
       aria-busy="true"
-      aria-label="Rewriting email"
+      aria-label={label}
     >
       <div className="border-b border-border bg-seafoam-50 px-4 py-3">
         <ShimmerBar className="h-2.5 w-24" />
@@ -53,7 +55,7 @@ export function EmailBodyPreviewShimmer({
       </div>
 
       <p className="border-t border-border bg-seafoam-50 px-5 py-3 text-center text-xs font-medium text-teal-800">
-        Rewriting with AI…
+        {label}
       </p>
     </div>
   );

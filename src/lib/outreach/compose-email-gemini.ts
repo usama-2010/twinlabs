@@ -8,6 +8,10 @@ import {
   validateGeminiSubject,
 } from "@/lib/outreach/validations/gemini-compose";
 import { subjectAngleHint } from "@/lib/outreach/subject-line";
+import type { ChatTurn } from "@/lib/outreach/validations/chat-modify";
+import {
+  chatModifyResponseSchema,
+} from "@/lib/outreach/validations/chat-modify";
 
 const SUBJECT_SYSTEM_PROMPT = `You write email subject lines the way a real UK founder would — typing quickly in Gmail before moving on.
 
@@ -81,6 +85,31 @@ Usama
 TwinLabs
 - Do NOT include website URLs, email addresses, or "see our work" in the body.
 - Return JSON only: { "body": "..." }`;
+
+const CHAT_MODIFY_SYSTEM_PROMPT = `You revise cold outreach email drafts based on user feedback.
+
+You write as Usama from TwinLabs — a small UK software studio. Sound human, not like ChatGPT or a sales sequence.
+
+Voice rules (always apply):
+- Short sentences. Contractions are fine.
+- Never use: delve, landscape, utilize, synergy, leverage, exciting, thrilled, impressive, stood out, cutting-edge.
+- Never open with "Hope you're well", "I wanted to reach out", or "I hope this finds you well".
+- Plain English only. Never use: HTTPS, HTTP, SSL, URL, UX, UI, SEO, API.
+- Use ONLY facts from lead_brief. Never invent problems, ratings, locations, or services.
+- Do not mention or repeat website addresses.
+
+Revision rules:
+- Apply the user's instruction to current_email while keeping the same overall purpose (cold outreach).
+- Update subject if the instruction affects it; otherwise keep a similar human subject.
+- Body must end with sign-off only:
+Cheers,
+Usama
+TwinLabs
+- Keep body 70–110 words unless the user explicitly asks for shorter/longer.
+- prior_requests lists earlier user instructions for context — honour the latest instruction most.
+
+Return JSON only:
+{ "subject": "...", "body": "...", "summary": "One short sentence describing what you changed." }`;
 
 function getModelName(): string {
   return process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
@@ -220,6 +249,101 @@ export async function composeGeminiSubject(
     } catch (error) {
       console.error(
         `[Gemini subject fallback] ${brief.business_name} (attempt ${attempt}):`,
+        error instanceof Error ? error.message : error
+      );
+    }
+  }
+
+  return null;
+}
+
+export type { ChatTurn };
+
+async function requestGeminiChatModify(
+  input: {
+    brief: LeadBrief;
+    currentSubject: string;
+    currentBody: string;
+    instruction: string;
+    history?: ChatTurn[];
+  },
+  timeoutMs: number
+): Promise<{ subject: string; body: string; summary: string } | null> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return null;
+
+  const priorRequests =
+    input.history?.filter((turn) => turn.role === "user").map((turn) => turn.content) ??
+    [];
+
+  const payload = {
+    lead_brief: briefForGemini(input.brief),
+    current_email: {
+      subject: input.currentSubject,
+      body: input.currentBody,
+    },
+    instruction: input.instruction,
+    prior_requests: priorRequests,
+  };
+
+  const client = new GoogleGenerativeAI(apiKey);
+  const model = client.getGenerativeModel({
+    model: getModelName(),
+    systemInstruction: CHAT_MODIFY_SYSTEM_PROMPT,
+  });
+
+  const result = await Promise.race([
+    model.generateContent({
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: JSON.stringify(payload, null, 2) }],
+        },
+      ],
+      generationConfig: {
+        temperature: 0.5,
+        maxOutputTokens: 2048,
+        responseMimeType: "application/json",
+      },
+    }),
+    new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error("Gemini request timed out")), timeoutMs);
+    }),
+  ]);
+
+  const text = result.response.text();
+  const parsed = parseGeminiJson(text);
+  const validated = chatModifyResponseSchema.safeParse(parsed);
+  if (!validated.success) return null;
+
+  const subject = validateGeminiSubject({ subject: validated.data.subject });
+  const bodyResult = validateGeminiBodyOnly({ body: validated.data.body });
+
+  if (!subject || !bodyResult) return null;
+
+  return {
+    subject,
+    body: bodyResult.body,
+    summary: validated.data.summary.trim(),
+  };
+}
+
+export async function modifyGeminiEmailWithChat(input: {
+  brief: LeadBrief;
+  currentSubject: string;
+  currentBody: string;
+  instruction: string;
+  history?: ChatTurn[];
+}): Promise<{ subject: string; body: string; summary: string } | null> {
+  const timeoutMs = 30_000;
+
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    try {
+      const revised = await requestGeminiChatModify(input, timeoutMs);
+      if (revised) return revised;
+    } catch (error) {
+      console.error(
+        `[Gemini chat modify] ${input.brief.business_name} (attempt ${attempt}):`,
         error instanceof Error ? error.message : error
       );
     }

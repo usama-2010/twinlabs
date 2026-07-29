@@ -2774,6 +2774,16 @@ body {
   }
 }
 
+.outreach-notice {
+  border-radius: 0.875rem;
+  border: 1px solid #e8dcc0;
+  background: #fffbeb;
+  padding: 0.875rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: #78350f;
+}
+
 .outreach-alert {
   border-radius: 0.875rem;
   border: 1px solid #f0d9a8;

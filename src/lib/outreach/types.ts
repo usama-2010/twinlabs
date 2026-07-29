@@ -36,6 +36,14 @@ export type Lead = {
   dedupe_key: string;
   created_at: string;
   updated_at: string;
+  composed?: LeadComposedEmail | null;
+};
+
+export type LeadComposedEmail = {
+  subject: string;
+  body: string;
+  html: string;
+  editable: boolean;
 };
 
 export type Campaign = {

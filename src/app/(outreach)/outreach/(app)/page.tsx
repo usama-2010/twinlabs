@@ -2,13 +2,15 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
-import { EmailBodyPreview } from "@/components/outreach/EmailBodyPreview";
-import { EmailBodyPreviewShimmer } from "@/components/outreach/EmailBodyPreviewShimmer";
+import { EditableEmailPreview } from "@/components/outreach/EditableEmailPreview";
 import { ImportProgressPanel } from "@/components/outreach/ImportProgressPanel";
 import { OutreachLoader } from "@/components/outreach/OutreachLoader";
 import { OutreachPageHeader } from "@/components/outreach/OutreachPageHeader";
 import { PrioritySelect } from "@/components/outreach/PrioritySelect";
-import { RewriteEmailButton } from "@/components/outreach/RewriteEmailButton";
+import {
+  scanSpreadsheetEmailStats,
+  type EmailStats,
+} from "@/lib/outreach/count-email-stats";
 import { parseUploadFileMeta } from "@/lib/outreach/parse-file-meta";
 import type {
   ComposeSource,
@@ -43,7 +45,11 @@ export default function OutreachUploadPage() {
   const [setup, setSetup] = useState<SetupStatus | null>(null);
   const [setupLoading, setSetupLoading] = useState(true);
   const [rewritingLeadId, setRewritingLeadId] = useState<string | null>(null);
+  const [savingLeadId, setSavingLeadId] = useState<string | null>(null);
   const [rewriteError, setRewriteError] = useState("");
+  const [fileStats, setFileStats] = useState<EmailStats | null>(null);
+  const [scanningFile, setScanningFile] = useState(false);
+  const [chattingLeadId, setChattingLeadId] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/outreach/status")
@@ -56,18 +62,33 @@ export default function OutreachUploadPage() {
       .finally(() => setSetupLoading(false));
   }, []);
 
-  function handleFileChange(selected: File | null) {
+  async function handleFileChange(selected: File | null) {
     setFile(selected);
+    setFileStats(null);
+    setSummary(null);
+    setError("");
 
     if (!selected) return;
 
     const meta = parseUploadFileMeta(selected);
     if (meta.profession) setProfession(meta.profession);
     if (meta.priority) setPriority(meta.priority);
+
+    setScanningFile(true);
+    try {
+      const stats = await scanSpreadsheetEmailStats(selected, {
+        profession: meta.profession || profession || undefined,
+        priority: meta.priority || priority || undefined,
+      });
+      setFileStats(stats);
+    } catch {
+      setFileStats(null);
+    } finally {
+      setScanningFile(false);
+    }
   }
 
-  async function handleImport(event: FormEvent) {
-    event.preventDefault();
+  async function runImport() {
     if (!file) return;
 
     setLoading(true);
@@ -139,6 +160,20 @@ export default function OutreachUploadPage() {
       setLoading(false);
       setImportProgress(null);
     }
+  }
+
+  async function handleImport(event: FormEvent) {
+    event.preventDefault();
+    if (!file) return;
+
+    if (fileStats && fileStats.needsEmail > 0) {
+      const confirmed = window.confirm(
+        `${fileStats.needsEmail} of ${fileStats.total} leads have no email address.\n\nWe'll still compose emails for every row, but those leads won't send until you add addresses in Leads.\n\nContinue?`
+      );
+      if (!confirmed) return;
+    }
+
+    await runImport();
   }
 
   async function handleStartSending() {
@@ -213,6 +248,105 @@ export default function OutreachUploadPage() {
     }
   }
 
+  async function handleSaveSample(
+    leadId: string,
+    payload: { subject: string; body: string }
+  ) {
+    setSavingLeadId(leadId);
+    setRewriteError("");
+
+    const response = await fetch("/api/outreach/leads", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: leadId,
+        action: "update_email",
+        subject: payload.subject,
+        body: payload.body,
+      }),
+    });
+
+    const data = await response.json();
+    setSavingLeadId(null);
+
+    if (!response.ok) {
+      throw new Error(data.error ?? "Failed to save email.");
+    }
+
+    setSummary((current) => {
+      if (!current) return current;
+
+      return {
+        ...current,
+        samples: current.samples.map((sample) =>
+          sample.leadId === leadId
+            ? {
+                ...sample,
+                subject: data.subject,
+                text: data.body,
+                html: data.html,
+              }
+            : sample
+        ),
+      };
+    });
+  }
+
+  async function handleChatModifySample(
+    leadId: string,
+    instruction: string,
+    history: Array<{ role: "user" | "assistant"; content: string }>
+  ) {
+    setChattingLeadId(leadId);
+    setRewriteError("");
+
+    try {
+      const response = await fetch("/api/outreach/leads", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: leadId,
+          action: "chat_modify",
+          instruction,
+          history,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error ?? "Failed to refine email.");
+      }
+
+      setSummary((current) => {
+        if (!current) return current;
+
+        return {
+          ...current,
+          samples: current.samples.map((sample) =>
+            sample.leadId === leadId
+              ? {
+                  ...sample,
+                  subject: data.subject,
+                  text: data.body,
+                  html: data.html,
+                }
+              : sample
+          ),
+        };
+      });
+
+      return { assistantMessage: data.assistantMessage as string };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Failed to refine email.";
+      setRewriteError(message);
+      throw error;
+    } finally {
+      setChattingLeadId(null);
+    }
+  }
+
   return (
     <div className="mx-auto max-w-2xl space-y-8">
       {starting ? <OutreachLoader variant="overlay" label="Starting send…" size="lg" /> : null}
@@ -269,6 +403,25 @@ export default function OutreachUploadPage() {
                 Couldn&apos;t detect profession/priority from filename — fill in
                 manually if needed.
               </p>
+            ) : null}
+            {scanningFile ? (
+              <p className="mt-2 text-xs text-muted">Scanning file…</p>
+            ) : null}
+            {fileStats && fileStats.total > 0 ? (
+              <div className="outreach-notice mt-3">
+                {fileStats.needsEmail > 0 ? (
+                  <p>
+                    <strong>{fileStats.needsEmail}</strong> of{" "}
+                    <strong>{fileStats.total}</strong> rows have no email. We&apos;ll
+                    still compose emails for every row, but those leads won&apos;t
+                    send until you add addresses in Leads.
+                  </p>
+                ) : (
+                  <p>
+                    All <strong>{fileStats.total}</strong> rows have an email address.
+                  </p>
+                )}
+              </div>
             ) : null}
           </div>
 
@@ -365,12 +518,21 @@ export default function OutreachUploadPage() {
             <p className="mt-1 text-sm text-muted">
               First, middle, and last row · AI {summary.aiComposed} · templates{" "}
               {summary.templateScenario + summary.templateGeneric}
+              {setup?.gemini ? (
+                <>
+                  {" "}
+                  · Use <strong className="font-medium text-foreground">Refine with AI</strong>{" "}
+                  below each email to edit with chat
+                </>
+              ) : null}
             </p>
 
             <div className="mt-5 divide-y divide-border">
               {summary.samples.map((sample) => {
                 const sampleKey = sample.leadId ?? sample.business_name;
                 const isRewriting = rewritingLeadId === sample.leadId;
+                const isSaving = savingLeadId === sample.leadId;
+                const isChatting = chattingLeadId === sample.leadId;
 
                 return (
                   <article key={sampleKey} className="py-5 first:pt-0 last:pb-0">
@@ -386,23 +548,33 @@ export default function OutreachUploadPage() {
                           {sample.source.replace("_", " ")}
                         </span>
                       ) : null}
-                      <div className="ml-auto">
-                        {sample.leadId && setup?.gemini ? (
-                          <RewriteEmailButton
-                            loading={isRewriting}
-                            disabled={Boolean(rewritingLeadId && !isRewriting)}
-                            onClick={() => handleRewriteSample(sample.leadId!)}
-                          />
-                        ) : null}
-                      </div>
                     </div>
-                    {isRewriting ? (
-                      <EmailBodyPreviewShimmer />
+                    {sample.leadId ? (
+                      <EditableEmailPreview
+                        subject={sample.subject}
+                        body={sample.text ?? ""}
+                        sessionKey={sample.leadId}
+                        embedded
+                        editable
+                        showRewrite={Boolean(setup?.gemini)}
+                        showChat={Boolean(setup?.gemini)}
+                        rewriting={isRewriting}
+                        chatting={isChatting}
+                        saving={isSaving}
+                        onSave={(payload) => handleSaveSample(sample.leadId!, payload)}
+                        onRewrite={() => handleRewriteSample(sample.leadId!)}
+                        onChatModify={(instruction, history) =>
+                          handleChatModifySample(sample.leadId!, instruction, history)
+                        }
+                      />
                     ) : (
-                      <EmailBodyPreview
+                      <EditableEmailPreview
                         subject={sample.subject}
                         body={sample.text ?? ""}
                         embedded
+                        editable={false}
+                        showRewrite={false}
+                        onSave={async () => {}}
                       />
                     )}
                   </article>
