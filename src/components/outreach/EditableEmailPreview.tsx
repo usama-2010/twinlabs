@@ -22,6 +22,7 @@ type EditableEmailPreviewProps = {
   saving?: boolean;
   onSave: (payload: { subject: string; body: string }) => Promise<void>;
   onRewrite?: () => void;
+  onCancelAi?: () => void;
   onChatModify?: (
     instruction: string,
     history: ChatMessage[]
@@ -41,6 +42,7 @@ export function EditableEmailPreview({
   saving = false,
   onSave,
   onRewrite,
+  onCancelAi,
   onChatModify,
 }: EditableEmailPreviewProps) {
   const [isEditing, setIsEditing] = useState(false);
@@ -99,12 +101,17 @@ export function EditableEmailPreview({
   }
 
   if (rewriting) {
-    return <EmailBodyPreviewShimmer />;
+    return (
+      <EmailBodyPreviewShimmer
+        label="Rewriting with AI…"
+        onCancel={onCancelAi}
+      />
+    );
   }
 
   return (
     <div className="mt-3">
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="mb-3 flex flex-wrap items-center justify-end gap-2">
         {editable && !isEditing ? (
           <button
             type="button"
@@ -158,7 +165,7 @@ export function EditableEmailPreview({
             </p>
           ) : null}
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap justify-end gap-2">
             <button
               type="button"
               onClick={handleSave}
@@ -187,7 +194,10 @@ export function EditableEmailPreview({
             }
           >
             {showPreviewShimmer ? (
-              <EmailBodyPreviewShimmer label="Revising with AI…" />
+              <EmailBodyPreviewShimmer
+                label="Revising with AI…"
+                onCancel={onCancelAi}
+              />
             ) : (
               <EmailBodyPreview subject={subject} body={body} embedded={embedded} />
             )}
@@ -199,6 +209,7 @@ export function EditableEmailPreview({
               disabled={busy}
               chatting={chatting}
               onRevisingChange={setRevising}
+              onCancel={onCancelAi}
               onSend={onChatModify}
             />
           ) : null}

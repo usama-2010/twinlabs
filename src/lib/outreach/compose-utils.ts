@@ -1,5 +1,9 @@
 import type { LeadBrief } from "@/lib/outreach/lead-brief";
 import { humanizeReason } from "@/lib/outreach/tech-jargon";
+import {
+  growthOutcomeLine,
+  growthProofLine,
+} from "@/lib/outreach/email-growth-stats";
 
 export function hashString(value: string): number {
   let hash = 0;
@@ -82,8 +86,8 @@ export function offerLine(brief: LeadBrief): string {
   if (/automotive|mechanic|garage|ford dealer/i.test(key)) {
     return pick(
       [
-        "I'm Usama — I run TwinLabs with my co-founder here in the UK. We build websites and booking bits for garages. Fixed quote before we start, no agency nonsense.",
-        "My co-founder and I run TwinLabs. We mostly work with garages on websites and making it easier for people to book or get in touch online.",
+        "I'm Usama — I run TwinLabs with my co-founder here in the UK. A trades firm we work with cut office admin by about 73% — less phone tag, more jobs booked.",
+        "My co-founder and I run TwinLabs. We help garages turn enquiries into booked jobs — one client saved roughly 73% of the admin their office was doing weekly.",
       ],
       seed
     );
@@ -92,8 +96,8 @@ export function offerLine(brief: LeadBrief): string {
   if (/hair|salon|barber|beauty/i.test(key)) {
     return pick(
       [
-        "We're TwinLabs — a small UK studio. We build booking systems and websites for salons that cut no-shows and stop reception drowning in calls.",
-        "My co-founder and I run TwinLabs. We work with salons and barbers on booking, websites, and the admin that eats into your day.",
+        "We're TwinLabs — a small UK studio. We help salons fill the diary and cut no-shows — one client dropped empty chairs by about 70%.",
+        "My co-founder and I run TwinLabs. We work with salons on booking and reminders — roughly 70% fewer no-shows is typical once it's sorted properly.",
       ],
       seed
     );
@@ -102,8 +106,8 @@ export function offerLine(brief: LeadBrief): string {
   if (/restaurant|cafe|takeaway|hotel/i.test(key)) {
     return pick(
       [
-        "We're TwinLabs — two founders, no account managers. We build online booking and simple tools for hospitality businesses that match how you actually run things.",
-        "I co-founded TwinLabs here in the UK. We help restaurants, cafés, and hotels with websites and tools that fit how you work — not the other way around.",
+        "We're TwinLabs — two founders, no account managers. One restaurant group saw online bookings go up about 3× after we fixed their flow.",
+        "I co-founded TwinLabs here in the UK. We build booking tools for hospitality — a five-venue client tripled online covers without hiring.",
       ],
       seed
     );
@@ -111,8 +115,8 @@ export function offerLine(brief: LeadBrief): string {
 
   return pick(
     [
-      "I'm Usama — I run TwinLabs with my co-founder in the UK. We build websites and simple booking tools for small businesses. Quote upfront, no agency runaround.",
-      "My co-founder and I run TwinLabs. We help UK businesses with websites and the boring admin stuff around bookings and enquiries.",
+      "I'm Usama — I run TwinLabs with my co-founder in the UK. Recent builds: ~70% fewer no-shows, 3× online bookings, ~73% less admin. Quote upfront.",
+      "My co-founder and I run TwinLabs. We help UK businesses get more from the same team — one trades client cut weekly admin by about 73%.",
     ],
     seed
   );
@@ -144,6 +148,10 @@ export function assembleEmail(brief: LeadBrief, issueParagraph: string | null): 
   const paragraphs = [greeting(brief), openerLine(brief)];
 
   if (issueParagraph) paragraphs.push(issueParagraph);
+
+  const growth = growthOutcomeLine(brief);
+  paragraphs.push(growth);
+  paragraphs.push(growthProofLine(brief));
 
   const reason = reasonLine(brief);
   if (reason) paragraphs.push(reason);

@@ -33,7 +33,7 @@ export function EmailBodyPreview({
   const signOff = resolveSignOff(signOffLines);
   const closing = signOff[0] ?? "Cheers,";
   const name = signOff.find((line) => /^usama/i.test(line)) ?? "Usama";
-  const { ctaLabel, ctaHref, siteUrl } = getOutreachPreviewMeta();
+  const { ctaLabel, ctaBody, ctaHref, siteUrl } = getOutreachPreviewMeta();
 
   const shellClass = embedded
     ? "mt-3 overflow-hidden rounded-lg border border-border bg-paper"
@@ -72,10 +72,7 @@ export function EmailBodyPreview({
         })}
 
         <div className="rounded-lg border border-border bg-seafoam-50 p-4">
-          <p className="text-sm leading-6 text-foreground">
-            We build websites and booking tools for UK businesses — fixed quotes,
-            no runaround.
-          </p>
+          <p className="text-sm leading-6 text-foreground">{ctaBody}</p>
           <a
             href={ctaHref}
             target="_blank"

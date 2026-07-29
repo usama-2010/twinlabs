@@ -12,6 +12,7 @@ import type { ChatTurn } from "@/lib/outreach/validations/chat-modify";
 import {
   chatModifyResponseSchema,
 } from "@/lib/outreach/validations/chat-modify";
+import { geminiGrowthGuidance, approvedStatsForGemini } from "@/lib/outreach/email-growth-copy";
 
 const SUBJECT_SYSTEM_PROMPT = `You write email subject lines the way a real UK founder would — typing quickly in Gmail before moving on.
 
@@ -74,11 +75,12 @@ Structure (use \\n\\n between blocks):
 2. Two or three short paragraphs — 1–3 sentences each, grouped naturally
 3. Optional soft CTA in the last paragraph (no links)
 
-- Keep total length 70–110 words. Shorter is better.
+- Keep total length 85–130 words. Shorter is better, but include one number.
 - Mention TwinLabs once, briefly — two founders, UK-based, quote upfront.
 - If issue_type is "no_website": do NOT mention fixing their website. Talk about being hard to find online.
 - If issue_type is "not_secure": explain browser "not secure" warnings or missing padlock in plain language.
 - One soft CTA only (e.g. quick call, no pressure) — no website links; we append those.
+${geminiGrowthGuidance}
 - End with sign-off only:
 Cheers,
 Usama
@@ -106,6 +108,7 @@ Cheers,
 Usama
 TwinLabs
 - Keep body 70–110 words unless the user explicitly asks for shorter/longer.
+${geminiGrowthGuidance}
 - prior_requests lists earlier user instructions for context — honour the latest instruction most.
 
 Return JSON only:
@@ -117,11 +120,15 @@ function getModelName(): string {
 
 function briefForGemini(
   brief: LeadBrief
-): Omit<LeadBrief, "website"> & { subject_angle_hint: string } {
+): Omit<LeadBrief, "website"> & {
+  subject_angle_hint: string;
+  approved_stats: ReturnType<typeof approvedStatsForGemini>;
+} {
   const { website: _website, ...safe } = brief;
   return {
     ...safe,
     subject_angle_hint: subjectAngleHint(brief),
+    approved_stats: approvedStatsForGemini(),
   };
 }
 
@@ -278,6 +285,7 @@ async function requestGeminiChatModify(
 
   const payload = {
     lead_brief: briefForGemini(input.brief),
+    approved_stats: approvedStatsForGemini(),
     current_email: {
       subject: input.currentSubject,
       body: input.currentBody,

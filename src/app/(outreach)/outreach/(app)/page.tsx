@@ -1,12 +1,13 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { EditableEmailPreview } from "@/components/outreach/EditableEmailPreview";
 import { ImportProgressPanel } from "@/components/outreach/ImportProgressPanel";
 import { OutreachLoader } from "@/components/outreach/OutreachLoader";
 import { OutreachPageHeader } from "@/components/outreach/OutreachPageHeader";
 import { PrioritySelect } from "@/components/outreach/PrioritySelect";
+import { isAbortError } from "@/lib/outreach/abort-error";
 import {
   scanSpreadsheetEmailStats,
   type EmailStats,
@@ -50,6 +51,13 @@ export default function OutreachUploadPage() {
   const [fileStats, setFileStats] = useState<EmailStats | null>(null);
   const [scanningFile, setScanningFile] = useState(false);
   const [chattingLeadId, setChattingLeadId] = useState<string | null>(null);
+  const [importUiPhase, setImportUiPhase] = useState<
+    "idle" | "running" | "complete"
+  >("idle");
+
+  const importAbortRef = useRef<AbortController | null>(null);
+  const aiAbortRef = useRef<AbortController | null>(null);
+  const importResultsRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     fetch("/api/outreach/status")
@@ -88,14 +96,30 @@ export default function OutreachUploadPage() {
     }
   }
 
+  function cancelImport() {
+    importAbortRef.current?.abort();
+    importAbortRef.current = null;
+  }
+
+  function cancelAiOperation() {
+    aiAbortRef.current?.abort();
+    aiAbortRef.current = null;
+    setRewritingLeadId(null);
+    setChattingLeadId(null);
+  }
+
   async function runImport() {
     if (!file) return;
 
     setLoading(true);
+    setImportUiPhase("running");
     setError("");
     setSummary(null);
     setStartResult("");
     setImportProgress(null);
+
+    const controller = new AbortController();
+    importAbortRef.current = controller;
 
     const formData = new FormData();
     formData.append("file", file);
@@ -108,6 +132,7 @@ export default function OutreachUploadPage() {
       const response = await fetch("/api/outreach/import", {
         method: "POST",
         body: formData,
+        signal: controller.signal,
       });
 
       if (!response.ok) {
@@ -125,6 +150,8 @@ export default function OutreachUploadPage() {
       const decoder = new TextDecoder();
       let buffer = "";
       let finished = false;
+      let finalSummary: ImportSummary | null = null;
+      let lastProgress: ImportProgress | null = null;
 
       while (!finished) {
         const { done, value } = await reader.read();
@@ -140,11 +167,12 @@ export default function OutreachUploadPage() {
           const event = JSON.parse(line) as ImportStreamEvent;
 
           if (event.type === "progress") {
+            lastProgress = event.progress;
             setImportProgress(event.progress);
           }
 
           if (event.type === "complete") {
-            setSummary(event.summary);
+            finalSummary = event.summary;
             finished = true;
           }
 
@@ -154,10 +182,36 @@ export default function OutreachUploadPage() {
           }
         }
       }
-    } catch {
-      setError("Import failed. Check your connection and try again.");
+
+      if (finalSummary) {
+        const total = lastProgress?.total ?? finalSummary.imported + finalSummary.updated;
+        setImportProgress({
+          phase: "complete",
+          completed: total,
+          total,
+          remaining: 0,
+          leadNames: lastProgress?.leadNames,
+        });
+        setImportUiPhase("complete");
+
+        await new Promise((resolve) => window.setTimeout(resolve, 1600));
+
+        setSummary(finalSummary);
+        importResultsRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    } catch (err) {
+      if (isAbortError(err)) {
+        setError("Import cancelled. Some leads may already be saved.");
+      } else {
+        setError("Import failed. Check your connection and try again.");
+      }
     } finally {
+      importAbortRef.current = null;
       setLoading(false);
+      setImportUiPhase("idle");
       setImportProgress(null);
     }
   }
@@ -205,6 +259,9 @@ export default function OutreachUploadPage() {
     setRewritingLeadId(leadId);
     setRewriteError("");
 
+    const controller = new AbortController();
+    aiAbortRef.current = controller;
+
     try {
       const response = await fetch("/api/outreach/leads", {
         method: "PATCH",
@@ -214,6 +271,7 @@ export default function OutreachUploadPage() {
           action: "rewrite",
           composeMode: "gemini",
         }),
+        signal: controller.signal,
       });
 
       const data = await response.json();
@@ -241,9 +299,14 @@ export default function OutreachUploadPage() {
           ),
         };
       });
-    } catch {
-      setRewriteError("Failed to rewrite email. Check your connection.");
+    } catch (err) {
+      if (!isAbortError(err)) {
+        setRewriteError("Failed to rewrite email. Check your connection.");
+      }
     } finally {
+      if (aiAbortRef.current === controller) {
+        aiAbortRef.current = null;
+      }
       setRewritingLeadId(null);
     }
   }
@@ -300,6 +363,9 @@ export default function OutreachUploadPage() {
     setChattingLeadId(leadId);
     setRewriteError("");
 
+    const controller = new AbortController();
+    aiAbortRef.current = controller;
+
     try {
       const response = await fetch("/api/outreach/leads", {
         method: "PATCH",
@@ -310,6 +376,7 @@ export default function OutreachUploadPage() {
           instruction,
           history,
         }),
+        signal: controller.signal,
       });
 
       const data = await response.json();
@@ -338,11 +405,17 @@ export default function OutreachUploadPage() {
 
       return { assistantMessage: data.assistantMessage as string };
     } catch (error) {
+      if (isAbortError(error)) {
+        throw error;
+      }
       const message =
         error instanceof Error ? error.message : "Failed to refine email.";
       setRewriteError(message);
       throw error;
     } finally {
+      if (aiAbortRef.current === controller) {
+        aiAbortRef.current = null;
+      }
       setChattingLeadId(null);
     }
   }
@@ -482,7 +555,7 @@ export default function OutreachUploadPage() {
           ) : null}
         </button>
 
-        {loading ? (
+        {importUiPhase !== "idle" ? (
           <ImportProgressPanel
             progress={
               importProgress ?? {
@@ -493,12 +566,23 @@ export default function OutreachUploadPage() {
               }
             }
             useAi={Boolean(useAi && setup?.gemini)}
+            onCancel={importUiPhase === "running" ? cancelImport : undefined}
           />
         ) : null}
       </form>
 
       {summary ? (
-        <div className="space-y-6">
+        <div ref={importResultsRef} className="space-y-6 scroll-mt-8">
+          <div className="outreach-card border-teal-800/25 bg-seafoam-50/60 p-4 sm:p-5">
+            <p className="text-sm font-semibold text-teal-800">Import complete</p>
+            <p className="mt-1 text-sm text-muted">
+              {summary.imported + summary.updated} leads processed ·{" "}
+              {summary.ready} ready to send
+              {summary.needsEmail > 0
+                ? ` · ${summary.needsEmail} need email addresses`
+                : ""}
+            </p>
+          </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
               ["Ready to send", summary.ready],
@@ -563,6 +647,7 @@ export default function OutreachUploadPage() {
                         saving={isSaving}
                         onSave={(payload) => handleSaveSample(sample.leadId!, payload)}
                         onRewrite={() => handleRewriteSample(sample.leadId!)}
+                        onCancelAi={cancelAiOperation}
                         onChatModify={(instruction, history) =>
                           handleChatModifySample(sample.leadId!, instruction, history)
                         }

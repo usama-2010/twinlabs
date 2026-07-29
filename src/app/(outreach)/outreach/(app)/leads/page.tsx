@@ -1,10 +1,11 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { EditableEmailPreview } from "@/components/outreach/EditableEmailPreview";
 import { OutreachPageHeader } from "@/components/outreach/OutreachPageHeader";
 import { OutreachLoader } from "@/components/outreach/OutreachLoader";
+import { isAbortError } from "@/lib/outreach/abort-error";
 import type { Lead } from "@/lib/outreach/types";
 
 const FILTERS = [
@@ -25,6 +26,15 @@ export default function OutreachLeadsPage() {
   const [rewritingId, setRewritingId] = useState<string | null>(null);
   const [chattingId, setChattingId] = useState<string | null>(null);
   const [emailError, setEmailError] = useState("");
+
+  const aiAbortRef = useRef<AbortController | null>(null);
+
+  function cancelAiOperation() {
+    aiAbortRef.current?.abort();
+    aiAbortRef.current = null;
+    setRewritingId(null);
+    setChattingId(null);
+  }
 
   async function loadLeads(status?: string) {
     setLoading(true);
@@ -105,11 +115,15 @@ export default function OutreachLeadsPage() {
     setRewritingId(id);
     setEmailError("");
 
+    const controller = new AbortController();
+    aiAbortRef.current = controller;
+
     try {
       const response = await fetch("/api/outreach/leads", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, action: "rewrite", composeMode: "gemini" }),
+        signal: controller.signal,
       });
 
       const data = await response.json();
@@ -141,9 +155,14 @@ export default function OutreachLeadsPage() {
             : lead
         )
       );
-    } catch {
-      setEmailError("Failed to rewrite email. Check your connection.");
+    } catch (err) {
+      if (!isAbortError(err)) {
+        setEmailError("Failed to rewrite email. Check your connection.");
+      }
     } finally {
+      if (aiAbortRef.current === controller) {
+        aiAbortRef.current = null;
+      }
       setRewritingId(null);
     }
   }
@@ -156,6 +175,9 @@ export default function OutreachLeadsPage() {
     setChattingId(id);
     setEmailError("");
 
+    const controller = new AbortController();
+    aiAbortRef.current = controller;
+
     try {
       const response = await fetch("/api/outreach/leads", {
         method: "PATCH",
@@ -166,6 +188,7 @@ export default function OutreachLeadsPage() {
           instruction,
           history,
         }),
+        signal: controller.signal,
       });
 
       const data = await response.json();
@@ -192,11 +215,17 @@ export default function OutreachLeadsPage() {
 
       return { assistantMessage: data.assistantMessage as string };
     } catch (error) {
+      if (isAbortError(error)) {
+        throw error;
+      }
       const message =
         error instanceof Error ? error.message : "Failed to refine email.";
       setEmailError(message);
       throw error;
     } finally {
+      if (aiAbortRef.current === controller) {
+        aiAbortRef.current = null;
+      }
       setChattingId(null);
     }
   }
@@ -346,6 +375,7 @@ export default function OutreachLeadsPage() {
                             saving={savingEmailId === lead.id}
                             onSave={(payload) => saveComposedEmail(lead.id, payload)}
                             onRewrite={() => rewriteComposedEmail(lead.id)}
+                            onCancelAi={cancelAiOperation}
                             onChatModify={(instruction, history) =>
                               chatModifyComposedEmail(lead.id, instruction, history)
                             }

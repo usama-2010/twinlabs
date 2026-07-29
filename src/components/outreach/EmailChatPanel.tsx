@@ -13,6 +13,7 @@ type EmailChatPanelProps = {
   disabled?: boolean;
   chatting?: boolean;
   onRevisingChange?: (revising: boolean) => void;
+  onCancel?: () => void;
   onSend: (
     instruction: string,
     history: ChatMessage[]
@@ -24,6 +25,7 @@ export function EmailChatPanel({
   disabled = false,
   chatting = false,
   onRevisingChange,
+  onCancel,
   onSend,
 }: EmailChatPanelProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -32,6 +34,7 @@ export function EmailChatPanel({
   const [sending, setSending] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const pendingInputRef = useRef("");
 
   const loading = sending || chatting;
 
@@ -55,6 +58,7 @@ export function EmailChatPanel({
     setError("");
     setSending(true);
     onRevisingChange?.(true);
+    pendingInputRef.current = trimmed;
     const userMessage: ChatMessage = { role: "user", content: trimmed };
     const priorHistory = messages;
     setMessages((current) => [...current, userMessage]);
@@ -70,12 +74,37 @@ export function EmailChatPanel({
         },
       ]);
     } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") {
+        setMessages((current) => {
+          const last = current[current.length - 1];
+          if (last?.role === "user") return current.slice(0, -1);
+          return current;
+        });
+        setInput(pendingInputRef.current);
+        return;
+      }
       setError(err instanceof Error ? err.message : "Failed to refine email.");
     } finally {
       setSending(false);
       onRevisingChange?.(false);
       inputRef.current?.focus();
     }
+  }
+
+  function handleCancel() {
+    onCancel?.();
+    setSending(false);
+    onRevisingChange?.(false);
+    setMessages((current) => {
+      const last = current[current.length - 1];
+      if (last?.role === "user") return current.slice(0, -1);
+      return current;
+    });
+    if (pendingInputRef.current) {
+      setInput(pendingInputRef.current);
+    }
+    setError("");
+    inputRef.current?.focus();
   }
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -148,21 +177,32 @@ export function EmailChatPanel({
           disabled={disabled || loading}
           className="outreach-input min-h-[2.75rem] flex-1 resize-none py-2 text-sm leading-relaxed"
         />
-        <button
-          type="button"
-          onClick={() => void handleSend()}
-          disabled={!input.trim() || disabled || loading}
-          className="btn-primary shrink-0 px-4 py-2.5 text-sm disabled:opacity-50 sm:min-w-[5.5rem]"
-        >
+        <div className="flex shrink-0 flex-col gap-2 sm:min-w-[5.5rem]">
+          <button
+            type="button"
+            onClick={() => void handleSend()}
+            disabled={!input.trim() || disabled || loading}
+            className="btn-primary px-4 py-2.5 text-sm disabled:opacity-50"
+          >
+            {loading ? (
+              <span className="inline-flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                Sending…
+              </span>
+            ) : (
+              "Send"
+            )}
+          </button>
           {loading ? (
-            <span className="inline-flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-              Sending…
-            </span>
-          ) : (
-            "Send"
-          )}
-        </button>
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="rounded-lg border border-border bg-paper px-4 py-2 text-sm font-medium text-muted hover:text-foreground"
+            >
+              Cancel
+            </button>
+          ) : null}
+        </div>
       </div>
     </div>
   );

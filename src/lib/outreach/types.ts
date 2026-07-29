@@ -128,7 +128,7 @@ export type ImportSummary = {
   }>;
 };
 
-export type ImportProgressPhase = "starting" | "composing" | "finishing";
+export type ImportProgressPhase = "starting" | "composing" | "finishing" | "complete";
 
 export type ImportProgress = {
   phase: ImportProgressPhase;

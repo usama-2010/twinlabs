@@ -12,6 +12,7 @@ import {
   resolveSignOff,
   stripSendTemplate,
 } from "@/lib/outreach/email-format";
+import { outreachEmailCta } from "@/lib/outreach/email-growth-copy";
 
 const INK = "#0f1f1f";
 const MUTED = "#4a6363";
@@ -47,9 +48,9 @@ function renderCtaBlock(): string {
     <tr>
       <td class="email-quote" style="padding:20px 22px;border-radius:12px;background-color:${SEAFOAM};border:1px solid ${BORDER};">
         <p class="email-text" style="margin:0 0 14px;font-size:15px;line-height:1.6;color:${INK};">
-          We build websites and booking tools for UK businesses — fixed quotes, no runaround.
+          ${escapeHtml(outreachEmailCta.body)}
         </p>
-        ${renderEmailButton("See our work", outreachWorkUrl())}
+        ${renderEmailButton(outreachEmailCta.buttonLabel, outreachWorkUrl())}
       </td>
     </tr>
   </table>`;
@@ -141,7 +142,8 @@ export function buildOutreachEmailText(
 
 export function getOutreachPreviewMeta() {
   return {
-    ctaLabel: "See our work",
+    ctaLabel: outreachEmailCta.buttonLabel,
+    ctaBody: outreachEmailCta.body,
     ctaHref: outreachWorkUrl(),
     siteUrl: outreachSiteUrl(),
     email: siteConfig.email,

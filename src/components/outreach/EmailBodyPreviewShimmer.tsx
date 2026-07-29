@@ -5,11 +5,13 @@ function ShimmerBar({ className = "" }: { className?: string }) {
 type EmailBodyPreviewShimmerProps = {
   className?: string;
   label?: string;
+  onCancel?: () => void;
 };
 
 export function EmailBodyPreviewShimmer({
   className = "",
   label = "Rewriting with AI…",
+  onCancel,
 }: EmailBodyPreviewShimmerProps) {
   return (
     <div
@@ -54,9 +56,18 @@ export function EmailBodyPreviewShimmer({
         </div>
       </div>
 
-      <p className="border-t border-border bg-seafoam-50 px-5 py-3 text-center text-xs font-medium text-teal-800">
-        {label}
-      </p>
+      <div className="flex items-center justify-between gap-3 border-t border-border bg-seafoam-50 px-5 py-3">
+        <p className="text-center text-xs font-medium text-teal-800">{label}</p>
+        {onCancel ? (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="shrink-0 rounded-lg border border-border bg-paper px-3 py-1 text-xs font-medium text-muted hover:text-foreground"
+          >
+            Cancel
+          </button>
+        ) : null}
+      </div>
     </div>
   );
 }

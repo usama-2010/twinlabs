@@ -7,6 +7,7 @@ import { homePageJsonLd } from "@/lib/seo/json-ld";
 import { createPageMetadata } from "@/lib/seo/metadata";
 import { TrustTicker } from "@/components/sections/TrustTicker";
 import { Services } from "@/components/sections/Services";
+import { GrowthPath } from "@/components/sections/GrowthPath";
 import { StatsStrip } from "@/components/sections/StatsStrip";
 import { PricingSection } from "@/components/sections/PricingSection";
 import { CaseStudies } from "@/components/sections/CaseStudies";
@@ -34,6 +35,7 @@ export default function Home() {
       <GuaranteeStrip />
       <TrustTicker />
       <Services />
+      <GrowthPath />
       <StatsStrip />
       <PricingSection />
       <CaseStudies />
