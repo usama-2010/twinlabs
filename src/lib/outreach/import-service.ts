@@ -137,17 +137,12 @@ export async function importSpreadsheet(
     leadNames: rows.map((row) => row.business_name),
   });
 
-  const sampleIndices = new Set<number>();
-  if (rows.length > 0) sampleIndices.add(0);
-  if (rows.length > 1) sampleIndices.add(Math.floor(rows.length / 2));
-  if (rows.length > 2) sampleIndices.add(rows.length - 1);
-
   let completedCount = 0;
 
   const results = await mapPool(
     rows,
     concurrency,
-    async (row: ParsedLeadRow & { profession?: string; priority?: string }, rowIndex) => {
+    async (row: ParsedLeadRow & { profession?: string; priority?: string }, _rowIndex) => {
       const dedupeKey = getDedupeKey(row);
       const status = leadStatusFromEmail(row.email);
 
@@ -239,17 +234,15 @@ export async function importSpreadsheet(
         throw new Error(campaignLeadError.message);
       }
 
-      if (sampleIndices.has(rowIndex)) {
-        result.sample = {
-          leadId,
-          business_name: row.business_name,
-          subject: composed.subject,
-          text: composed.body ?? composed.text ?? "",
-          html: composed.html,
-          status: status as LeadStatus,
-          source: composed.source as ComposeSource,
-        };
-      }
+      result.sample = {
+        leadId,
+        business_name: row.business_name,
+        subject: composed.subject,
+        text: composed.body ?? composed.text ?? "",
+        html: composed.html,
+        status: status as LeadStatus,
+        source: composed.source as ComposeSource,
+      };
 
       return result;
     },

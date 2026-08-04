@@ -598,9 +598,10 @@ export default function OutreachUploadPage() {
           </div>
 
           <div className="outreach-card p-5 sm:p-6">
-            <h2 className="text-base font-semibold text-foreground">Sample previews</h2>
+            <h2 className="text-base font-semibold text-foreground">Email previews</h2>
             <p className="mt-1 text-sm text-muted">
-              First, middle, and last row · AI {summary.aiComposed} · templates{" "}
+              All {summary.samples.length} lead{summary.samples.length === 1 ? "" : "s"} · AI{" "}
+              {summary.aiComposed} · templates{" "}
               {summary.templateScenario + summary.templateGeneric}
               {setup?.gemini ? (
                 <>
@@ -611,7 +612,7 @@ export default function OutreachUploadPage() {
               ) : null}
             </p>
 
-            <div className="mt-5 divide-y divide-border">
+            <div className="outreach-table-wrap mt-5 max-h-[min(70vh,960px)] divide-y divide-border">
               {summary.samples.map((sample) => {
                 const sampleKey = sample.leadId ?? sample.business_name;
                 const isRewriting = rewritingLeadId === sample.leadId;

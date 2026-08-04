@@ -148,7 +148,7 @@ export function ImportProgressPanel({
             {isComplete ? (
               <>
                 <span className="font-medium text-teal-800">{total}</span> emails
-                composed — scroll down to preview samples.
+                composed — scroll down to preview all emails.
               </>
             ) : total > 0 ? (
               <>
@@ -201,7 +201,7 @@ export function ImportProgressPanel({
         </div>
       ) : (
         <div className="mt-5 rounded-lg border border-[#c5e6dc] bg-paper px-4 py-3 text-sm text-teal-800">
-          All leads imported. Sample previews are ready below.
+          All leads imported. Email previews are ready below.
         </div>
       )}
 
