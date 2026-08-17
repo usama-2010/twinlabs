@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { siteConfig, footerSiteLinks, footer } from "@/lib/content/site";
+import { legalLinks } from "@/lib/content/legal";
 import { Logo } from "@/components/brand/Logo";
 
 export function Footer() {
@@ -63,9 +64,23 @@ export function Footer() {
         </div>
 
         <div className="site-footer-bottom mt-10 border-t border-border pt-6 md:mt-12 md:pt-8">
-          <p className="text-xs leading-relaxed text-muted">
-            © {year} {siteConfig.legalName} · {footer.tagline}
-          </p>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-xs leading-relaxed text-muted">
+              © {year} {siteConfig.legalName} · {footer.tagline}
+            </p>
+            <ul className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
+              {legalLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="link-hover transition-colors hover:text-foreground"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </footer>

@@ -2814,3 +2814,51 @@ body {
   transform: none;
   box-shadow: none;
 }
+
+/* Legal pages — privacy, terms */
+.legal-document-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.legal-section + .legal-section {
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+.legal-section-title {
+  margin: 0 0 0.875rem;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--foreground);
+}
+
+.legal-paragraph {
+  margin: 0 0 0.75rem;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.legal-paragraph:last-child {
+  margin-bottom: 0;
+}
+
+.legal-list {
+  margin: 0 0 0.75rem;
+  padding-left: 1.125rem;
+  list-style: disc;
+}
+
+.legal-list li {
+  margin-bottom: 0.5rem;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.legal-list li:last-child {
+  margin-bottom: 0;
+}

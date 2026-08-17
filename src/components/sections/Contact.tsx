@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { contact } from "@/lib/content/site";
@@ -191,6 +192,17 @@ export function Contact() {
                 {status === "error" ? (
                   <p className="mt-4 text-sm text-red-600">Something went wrong — email us directly.</p>
                 ) : null}
+
+                <p className="mt-6 text-xs leading-relaxed text-muted">
+                  By submitting this form, you agree to our{" "}
+                  <Link
+                    href="/privacy"
+                    className="text-foreground underline decoration-border underline-offset-2 transition-colors hover:text-teal-700 hover:decoration-teal-700"
+                  >
+                    Privacy Policy
+                  </Link>
+                  . We use your details only to respond to your enquiry.
+                </p>
 
                 <button
                   type="submit"
