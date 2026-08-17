@@ -5,6 +5,7 @@ export const siteConfig = {
   legalName: "Twinlabs Ltd",
   email: "info@twinlabs.co.uk",
   url: "https://twinlabs.co.uk",
+  linkedIn: "https://www.linkedin.com/company/twinlabs-ltd/",
   description:
     "Custom software for any business — booking systems, client portals, field apps, and automation. Fixed quotes, clear delivery.",
 };
@@ -130,6 +131,7 @@ export const footer = {
   tagline: "United Kingdom",
   links: [
     { label: "Email", href: "mailto:info@twinlabs.co.uk" },
+    { label: "LinkedIn", href: siteConfig.linkedIn },
     { label: "Get in touch", href: "/#contact" },
   ],
 };

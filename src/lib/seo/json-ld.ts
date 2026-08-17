@@ -26,7 +26,7 @@ export function organizationSchema(): JsonLd {
       url: absoluteUrl("/brand/logo-stacked.png"),
     },
     areaServed: seoConfig.areaServed,
-    sameAs: [],
+    sameAs: [siteConfig.linkedIn],
   };
 }
 
